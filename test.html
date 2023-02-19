@@ -1,0 +1,41 @@
+<!DOCTYPE html>
+<html>
+<head>
+	<title>BLE Scanner</title>
+	<meta charset="utf-8">
+</head>
+<body>
+	<h1>BLE Scanner</h1>
+	<button id="scanButton">Scan</button>
+	<div id="output"></div>
+	<script>
+		let scanner = null;
+
+		const scanButton = document.getElementById("scanButton");
+		const outputDiv = document.getElementById("output");
+
+		function log(msg) {
+			console.log(msg);
+			outputDiv.innerHTML += `${msg}<br>`;
+		}
+
+		function scan() {
+			log("Scanning for devices...");
+
+			navigator.bluetooth.requestLEScan({ acceptAllAdvertisements: true })
+			.then(scanner => {
+				log("Scan started.");
+				scanner.onadvertisementreceived = event => {
+					log(`Advertisement received: ${event.device.id}`);
+					log(`  Raw data: ${event.manufacturerData}`);
+				};
+			})
+			.catch(error => {
+				log(`Error: ${error}`);
+			});
+		}
+
+		scanButton.addEventListener("click", scan);
+	</script>
+</body>
+</html>
