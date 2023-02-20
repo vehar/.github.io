@@ -15,34 +15,27 @@
 		<p>&copy; 2023 Photo Gallery. All rights reserved.</p>
 	</footer>
 	<script>
-		// Replace FOLDER_LINK with the link to your Dropbox folder
-		var folderLink = "https://www.dropbox.com/sh/ewdiw4gadjkdo9d/AADBE3ySDvujlwLn1sEDPFiIa?dl=0";
+		var repoUrl = "https://api.github.com/repos/vehar/vehar.github.io/contents";
+		var jpgUrl = repoUrl + "/images/*.jpg";
 
-		// Use the Dropbox API to get the contents of the folder
 		var xhr = new XMLHttpRequest();
-		xhr.open('POST', 'https://api.dropboxapi.com/2/files/list_folder');
-		xhr.setRequestHeader('Authorization', 'Bearer sl.BZLxVYPqmzWmqlacYNiCMDYRF5Ffhhf1L-5RXj2JWNysr1koB_oBwhNTMG-6BHbHNGQkWJhZUHySWA2jnAYwxQpCLWQUNG66g21gzTp6vLY7LpYN_7aLg1kFVBbaugWsJ4iBu5vi');
-		xhr.setRequestHeader('Content-Type', 'application/json');
+		xhr.open('GET', jpgUrl);
 		xhr.onload = function() {
 			if (xhr.status === 200) {
-				// Loop through the files and add them to the photo gallery
-				var files = JSON.parse(xhr.responseText).entries;
+				var files = JSON.parse(xhr.responseText);
 				for (var i = 0; i < files.length; i++) {
-					if (files[i].tag === "file" && files[i].name.match(/\.(jpg|jpeg|png|gif)$/i)) {
-						var li = document.createElement('li');
-						var img = document.createElement('img');
-						img.src = "https://dl.dropboxusercontent.com/s/" + files[i].id + "/" + files[i].name + "?dl=1";
-						img.alt = files[i].name;
-						li.appendChild(img);
-						document.getElementById('photos').appendChild(li);
-					}
+					var li = document.createElement('li');
+					var img = document.createElement('img');
+					img.src = files[i].download_url;
+					img.alt = files[i].name;
+					li.appendChild(img);
+					document.getElementById('photos').appendChild(li);
 				}
 			} else {
 				// Handle the error
 			}
 		};
-		var params = '{"path": "' + folderLink + '", "recursive": false}';
-		xhr.send(params);
+		xhr.send();
 	</script>
 </body>
 </html>
